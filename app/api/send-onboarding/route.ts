@@ -96,7 +96,10 @@ export async function POST(request: NextRequest) {
     // Send email via Resend
     const hrEmail = process.env.HR_EMAIL || 'emelie.jomer@svt.se'
 
-    await resend.emails.send({
+    console.log('Sending email to:', hrEmail)
+    console.log('Using API key:', process.env.RESEND_API_KEY ? 'Set' : 'NOT SET')
+
+    const result = await resend.emails.send({
       from: 'SVTi Onboarding <onboarding@resend.dev>', // You'll need to update this with your verified domain
       to: hrEmail,
       subject: `Ny onboarding-information från ${name}`,
@@ -125,6 +128,8 @@ export async function POST(request: NextRequest) {
         },
       ],
     })
+
+    console.log('Resend result:', JSON.stringify(result))
 
     return NextResponse.json(
       { message: 'Information skickad!' },
