@@ -4,6 +4,7 @@ import { useState } from 'react'
 import toast from 'react-hot-toast'
 import imageCompression from 'browser-image-compression'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { useOnboarding } from '@/contexts/OnboardingContext'
 
 interface FormErrors {
   name?: string
@@ -14,7 +15,8 @@ interface FormErrors {
 
 export default function OnboardingForm() {
   const { t } = useLanguage()
-  
+  const { personalization } = useOnboarding()
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -153,7 +155,12 @@ export default function OnboardingForm() {
       data.append('computerChoice', formData.computerChoice === 'other' ? formData.otherComputer : formData.computerChoice)
       data.append('photo', photoFile!)
 
-      const response = await fetch('/api/send-onboarding', {
+      // Add pageId if this is a personalized page
+      if (personalization) {
+        data.append('pageId', personalization.id)
+      }
+
+      const response = await fetch('/api/submit-onboarding', {
         method: 'POST',
         body: data
       })
