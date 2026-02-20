@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
     console.log('Using API key:', process.env.RESEND_API_KEY ? 'Set' : 'NOT SET')
 
     const result = await resend.emails.send({
-      from: 'SVTi Onboarding <onboarding@resend.dev>', // You'll need to update this with your verified domain
+      from: 'SVTi Onboarding <onboarding@resend.dev>',
       to: hrEmail,
       subject: `Ny onboarding-information från ${name}`,
       html: `
@@ -130,6 +130,25 @@ export async function POST(request: NextRequest) {
     })
 
     console.log('Resend result:', JSON.stringify(result))
+
+    // Check if Resend returned an error
+    if (result.error) {
+      console.error('Resend error:', result.error)
+      return NextResponse.json(
+        { error: `Email failed: ${result.error.message || 'Unknown error'}` },
+        { status: 500 }
+      )
+    }
+
+    if (!result.data) {
+      console.error('No data in Resend response')
+      return NextResponse.json(
+        { error: 'Email failed: No response data' },
+        { status: 500 }
+      )
+    }
+
+    console.log('Email sent successfully! ID:', result.data.id)
 
     return NextResponse.json(
       { message: 'Information skickad!' },
