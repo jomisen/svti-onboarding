@@ -84,18 +84,22 @@ export async function POST(request: NextRequest) {
         // Continue without photo URL if upload fails
       }
 
-      // Send Slack notification
-      const slackSent = await sendSlackNotification(onboardingPage.slackWebhook, {
-        employeeName: name,
-        email,
-        computerChoice,
-        photoUrl,
-        managerName: onboardingPage.managerName
-      })
+      // Send Slack notification (if webhook is configured)
+      if (onboardingPage.slackWebhook) {
+        const slackSent = await sendSlackNotification(onboardingPage.slackWebhook, {
+          employeeName: name,
+          email,
+          computerChoice,
+          photoUrl,
+          managerName: onboardingPage.managerName
+        })
 
-      if (!slackSent) {
-        console.error('Failed to send Slack notification, but continuing...')
-        // Don't fail the request if Slack fails - form submission still succeeded
+        if (!slackSent) {
+          console.error('Failed to send Slack notification, but continuing...')
+          // Don't fail the request if Slack fails - form submission still succeeded
+        }
+      } else {
+        console.log('No Slack webhook configured, skipping notification')
       }
 
       return NextResponse.json(

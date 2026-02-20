@@ -21,10 +21,10 @@ export default function ManagerPortal() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    // Validate all fields
+    // Validate required fields (slackWebhook is optional for testing)
     if (!formData.employeeName || !formData.managerName || !formData.buddyName ||
-        !formData.teamName || !formData.startDate || !formData.meetingInfo || !formData.slackWebhook) {
-      toast.error('Alla fält måste fyllas i')
+        !formData.teamName || !formData.startDate || !formData.meetingInfo) {
+      toast.error('Alla obligatoriska fält måste fyllas i')
       return
     }
 
@@ -254,7 +254,7 @@ export default function ManagerPortal() {
         {/* Slack Webhook */}
         <div>
           <label htmlFor="slackWebhook" className="block text-sm font-medium text-gray-700 mb-2">
-            Slack Webhook URL <span className="text-red-500">*</span>
+            Slack Webhook URL <span className="text-gray-500">(valfritt)</span>
           </label>
           <input
             type="url"
@@ -262,12 +262,11 @@ export default function ManagerPortal() {
             name="slackWebhook"
             value={formData.slackWebhook}
             onChange={handleChange}
-            required
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-svt-purple focus:border-transparent font-mono text-sm"
             placeholder="https://hooks.slack.com/services/T00/B00/xxx"
           />
           <p className="text-xs text-gray-500 mt-1">
-            Notiser skickas hit när medarbetaren fyller i formuläret
+            Om du lämnar detta tomt kan du fortfarande testa - men du får ingen notis när formuläret skickas
           </p>
         </div>
 

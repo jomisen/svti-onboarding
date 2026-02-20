@@ -8,7 +8,7 @@ export interface OnboardingPage {
   teamName: string
   startDate: string // ISO format
   meetingInfo: string
-  slackWebhook: string
+  slackWebhook?: string // Optional - för testing utan Slack
   language: 'sv' | 'en'
   createdAt: number
   expiresAt: number
