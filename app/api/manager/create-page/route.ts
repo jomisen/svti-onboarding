@@ -18,19 +18,19 @@ export async function POST(request: NextRequest) {
       language = 'sv'
     } = body
 
-    // Validate required fields
-    if (!employeeName || !managerName || !buddyName || !teamName || !startDate || !meetingInfo || !slackWebhook) {
+    // Validate required fields (slackWebhook is optional)
+    if (!employeeName || !managerName || !buddyName || !teamName || !startDate || !meetingInfo) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Alla fält är obligatoriska'
+          error: 'Alla obligatoriska fält måste fyllas i'
         },
         { status: 400 }
       )
     }
 
-    // Validate Slack webhook URL
-    if (!validateSlackWebhook(slackWebhook)) {
+    // Validate Slack webhook URL (only if provided)
+    if (slackWebhook && !validateSlackWebhook(slackWebhook)) {
       return NextResponse.json(
         {
           success: false,
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
       teamName: teamName.trim(),
       startDate: startDate.trim(),
       meetingInfo: meetingInfo.trim(),
-      slackWebhook: slackWebhook.trim(),
+      ...(slackWebhook && { slackWebhook: slackWebhook.trim() }), // Only include if provided
       language,
       createdAt: now,
       expiresAt: now + thirtyDaysInMs
